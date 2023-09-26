@@ -56,7 +56,14 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.1.0-beta01")
     implementation("androidx.camera:camera-lifecycle:1.1.0-beta01")
     implementation("androidx.camera:camera-video:1.1.0-beta01")
-
     implementation("androidx.camera:camera-view:1.1.0-beta01")
     implementation("androidx.camera:camera-extensions:1.1.0-beta01")
+
+    // CropView
+    implementation("com.vanniktech:android-image-cropper:4.5.0")
+    // TextRegonation Google Lib
+    implementation("com.google.android.gms:play-services-mlkit-text-recognition:16.1.3")
+    // GPS
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+
 }
