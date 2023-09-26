@@ -40,6 +40,8 @@ import com.example.cameraxsample.databinding.ActivityMainBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.naver.maps.map.NaverMap
+import com.naver.maps.map.OnMapReadyCallback
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
@@ -50,7 +52,7 @@ import java.util.concurrent.Executors
 
 typealias LumaListener = (luma: Double) -> Unit
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     private lateinit var viewBinding: ActivityMainBinding
 
@@ -64,6 +66,8 @@ class MainActivity : AppCompatActivity() {
     private var recognizer: TextRecognizer? = null
 
     var uri : Uri? = null
+
+    var naverMap : NaverMap? = null
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
@@ -479,6 +483,8 @@ class MainActivity : AppCompatActivity() {
         val result = contentResolver.delete(filesUri, where, selectionArgs)
         return file.exists()
     }
+
+
 
 }
 

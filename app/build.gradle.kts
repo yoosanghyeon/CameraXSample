@@ -65,5 +65,5 @@ dependencies {
     implementation("com.google.android.gms:play-services-mlkit-text-recognition:16.1.3")
     // GPS
     implementation("com.google.android.gms:play-services-location:21.0.1")
-
+    implementation("com.naver.maps:map-sdk:3.17.0")
 }
