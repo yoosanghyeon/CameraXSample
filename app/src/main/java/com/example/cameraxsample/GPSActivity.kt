@@ -18,6 +18,7 @@ import com.naver.maps.map.MapFragment
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.map.overlay.Marker
 
 class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -60,6 +61,9 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
                     .animate(CameraAnimation.Easing)
 
                 naverMap.moveCamera(cameraUpdate)
+                val marker = Marker()
+                marker.position = LatLng(it.latitude, it.longitude)
+                marker.map = naverMap
             }
 
     }
