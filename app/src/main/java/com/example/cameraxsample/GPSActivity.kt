@@ -28,7 +28,7 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var viewBinding: ActivityGpsactivityBinding
 
-    private lateinit var naverMap: NaverMap
+    private var naverMap: NaverMap? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +60,7 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
                 val cameraUpdate = CameraUpdate.scrollTo(LatLng(it.latitude, it.longitude))
                     .animate(CameraAnimation.Easing)
 
-                naverMap.moveCamera(cameraUpdate)
+                naverMap?.moveCamera(cameraUpdate)
                 val marker = Marker()
                 marker.position = LatLng(it.latitude, it.longitude)
                 marker.map = naverMap
@@ -72,12 +72,6 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.e(TAG, "OnmapReady")
         naverMap = p0
 
-//        Handler().postDelayed({
-//            val cameraUpdate = CameraUpdate.scrollTo(LatLng(37.4816836, 126.8848364))
-//                .animate(CameraAnimation.Easing)
-//
-//            naverMap.moveCamera(cameraUpdate)
-//        }, 100)
     }
 
 
