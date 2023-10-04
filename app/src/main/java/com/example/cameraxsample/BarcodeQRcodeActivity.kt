@@ -18,12 +18,13 @@ class BarcodeQRcodeActivity : AppCompatActivity() {
         viewBinding = ActivityBarcodeQrcodeBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        val barcodeLauncher = registerForActivityResult<ScanOptions, ScanIntentResult>(
+        val barcodeLauncher = registerForActivityResult(
             ScanContract()
         ) { result: ScanIntentResult ->
             if (result.contents == null) {
                 Toast.makeText(this@BarcodeQRcodeActivity, "Cancelled", Toast.LENGTH_LONG).show()
             } else {
+                viewBinding.scanText.text = result.contents
                 Toast.makeText(
                     this@BarcodeQRcodeActivity,
                     "Scanned: " + result.contents,
@@ -32,7 +33,12 @@ class BarcodeQRcodeActivity : AppCompatActivity() {
             }
         }
 
-        barcodeLauncher.launch(ScanOptions())
+        viewBinding.scannerBtn.setOnClickListener{
+            val scanOption = ScanOptions()
+            scanOption.setOrientationLocked(true)
+            scanOption.setBarcodeImageEnabled(true)
+            barcodeLauncher.launch(scanOption)
+        }
 
     }
 }

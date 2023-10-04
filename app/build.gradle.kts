@@ -69,7 +69,9 @@ dependencies {
     implementation("com.naver.maps:map-sdk:3.17.0")
     // Permission
     implementation("io.github.ParkSangGwon:tedpermission:2.3.0")
-
+    // Zxing barcode qrcode lib
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    // Google barcode qrcode lib
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
 }
