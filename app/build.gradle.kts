@@ -62,9 +62,12 @@ dependencies {
     // CropView
     implementation("com.vanniktech:android-image-cropper:4.5.0")
     // TextRegonation Google Lib
-//    implementation("com.google.android.gms:play-services-mlkit-text-recognition:16.1.3")
+    // implementation("com.google.android.gms:play-services-mlkit-text-recognition:16.1.3")
     implementation("com.google.mlkit:text-recognition-korean:16.0.0")
     // GPS
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.naver.maps:map-sdk:3.17.0")
+    // Permission
+    implementation("io.github.ParkSangGwon:tedpermission:2.3.0")
+
 }

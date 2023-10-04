@@ -81,7 +81,7 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
                         val longitude = location.longitude
                         val cameraUpdate = CameraUpdate.scrollTo(LatLng(latitude, longitude))
                             .animate(CameraAnimation.Easing)
-
+                        Log.e(TAG, "lat:: $latitude lon:: $longitude")
                         naverMap?.moveCamera(cameraUpdate)
                     }
                 }
