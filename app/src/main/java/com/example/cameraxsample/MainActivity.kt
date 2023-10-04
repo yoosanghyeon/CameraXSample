@@ -32,7 +32,6 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import androidx.core.net.toUri
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageContractOptions
 import com.canhub.cropper.CropImageOptions
@@ -42,7 +41,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
 import java.io.File
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat

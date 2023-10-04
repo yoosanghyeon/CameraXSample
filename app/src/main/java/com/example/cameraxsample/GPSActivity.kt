@@ -3,10 +3,8 @@ package com.example.cameraxsample
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.cameraxsample.databinding.ActivityGpsactivityBinding
@@ -20,7 +18,6 @@ import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.MapFragment
-import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
@@ -29,13 +26,14 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
 
     val TAG = GPSActivity::class.java.name
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-
     private lateinit var viewBinding: ActivityGpsactivityBinding
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var naverMap: NaverMap? = null
 
 
+    lateinit var locationCallback : LocationCallback
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityGpsactivityBinding.inflate(layoutInflater)
@@ -66,11 +64,13 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
                 .animate(CameraAnimation.Easing)
 
             naverMap?.moveCamera(cameraUpdate)
-            val marker = Marker()
-            marker.position = LatLng(it.latitude, it.longitude)
-            marker.map = naverMap
+
+            val locationOverlay = naverMap?.locationOverlay
+            locationOverlay?.isVisible = true
+            locationOverlay?.position = LatLng(it.latitude, it.longitude)
+
         }
-        val locationCallback = object : LocationCallback() {
+        locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 if (locationResult == null) {
                     return
@@ -83,6 +83,11 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
                             .animate(CameraAnimation.Easing)
                         Log.e(TAG, "lat:: $latitude lon:: $longitude")
                         naverMap?.moveCamera(cameraUpdate)
+
+                        val locationOverlay = naverMap?.locationOverlay
+                        locationOverlay?.isVisible = true
+                        locationOverlay?.position = LatLng(latitude, longitude)
+
                     }
                 }
             }
@@ -95,18 +100,23 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
             locationRequest,
             locationCallback,
             Looper.getMainLooper()
-        );
+        )
 
 
     }
 
-    override fun onMapReady(p0: NaverMap) {
+    override fun onMapReady(map: NaverMap) {
         Log.e(TAG, "OnmapReady")
-        p0.extent = LatLngBounds(LatLng(31.43, 122.37), LatLng(44.35, 132.0))
-        p0.minZoom = 5.0
-        p0.maxZoom = 18.0
-        naverMap = p0
+        map.extent = LatLngBounds(LatLng(31.43, 122.37), LatLng(44.35, 132.0))
+        map.minZoom = 5.0
+        map.maxZoom = 18.0
+        naverMap = map
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
 
