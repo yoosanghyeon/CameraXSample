@@ -2,11 +2,16 @@ package com.example.cameraxsample
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.PointF
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentManager
 import com.example.cameraxsample.databinding.ActivityGpsactivityBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -16,108 +21,96 @@ import com.google.android.gms.location.LocationServices
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
+import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import com.naver.maps.map.overlay.Marker
+import com.naver.maps.map.util.FusedLocationSource
+import com.naver.maps.map.util.MarkerIcons
 
 class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
-
-    val TAG = GPSActivity::class.java.name
-
-    private lateinit var viewBinding: ActivityGpsactivityBinding
-
+    private var LOCATION_PERMISSION = 1004
+    private lateinit var naverMap: NaverMap
+    private lateinit var locationSource: FusedLocationSource
+    private val marker = Marker()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val PERMISSION = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION ,android.Manifest.permission.ACCESS_COARSE_LOCATION )
 
-    private var naverMap: NaverMap? = null
 
-
-    lateinit var locationCallback : LocationCallback
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewBinding = ActivityGpsactivityBinding.inflate(layoutInflater)
-        setContentView(viewBinding.root)
+        setContentView(R.layout.activity_gpsactivity)
 
 
-        val fm = supportFragmentManager
-        val mapFragment = fm.findFragmentById(R.id.map_fragment) as MapFragment?
-            ?: MapFragment.newInstance().also {
-                fm.beginTransaction().add(R.id.map_fragment, it).commit()
-            }
-
-        mapFragment.getMapAsync(this)
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            val cameraUpdate = CameraUpdate.scrollTo(LatLng(it.latitude, it.longitude))
-                .animate(CameraAnimation.Easing)
-
-            naverMap?.moveCamera(cameraUpdate)
-
-            val locationOverlay = naverMap?.locationOverlay
-            locationOverlay?.isVisible = true
-            locationOverlay?.position = LatLng(it.latitude, it.longitude)
-
+        locationSource = FusedLocationSource(this@GPSActivity , LOCATION_PERMISSION)
+        val fragmentManager: FragmentManager = supportFragmentManager
+        var mapFragment: MapFragment? = fragmentManager.findFragmentById(R.id.map) as MapFragment?
+        if (mapFragment == null) {
+            mapFragment = MapFragment.newInstance()
+            fragmentManager.beginTransaction().add(R.id.map, mapFragment).commit()
         }
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                if (locationResult == null) {
-                    return
-                }
-                for (location in locationResult.locations) {
-                    if (location != null) {
-                        val latitude = location.latitude
-                        val longitude = location.longitude
-                        val cameraUpdate = CameraUpdate.scrollTo(LatLng(latitude, longitude))
-                            .animate(CameraAnimation.Easing)
-                        Log.e(TAG, "lat:: $latitude lon:: $longitude")
-                        naverMap?.moveCamera(cameraUpdate)
 
-                        val locationOverlay = naverMap?.locationOverlay
-                        locationOverlay?.isVisible = true
-                        locationOverlay?.position = LatLng(latitude, longitude)
+        mapFragment!!.getMapAsync(this)
 
+    }
+
+    @UiThread
+    override fun onMapReady(map: NaverMap) {
+
+        naverMap = map
+//        naverMap.maxZoom =18.0
+//        naverMap.minZoom =5.0
+
+
+//        카메라 설정
+        val cameraPosition = CameraPosition(
+            LatLng(37.5666102, 126.9783881), // 대상 지점
+            16.0, // 줌 레벨
+            20.0, // 기울임 각도
+            180.0 // 베어링 각도
+        )
+        naverMap.cameraPosition = cameraPosition
+
+        naverMap.addOnCameraChangeListener { reason, animated ->
+            // 마커 포지션
+//            marker.position = LatLng(naverMap.cameraPosition.target.latitude, naverMap.cameraPosition.target.longitude) }
+
+//        naverMap.addOnCameraIdleListener {
+//            // 현재 보이는 네이버맵의 정중앙 가운데로 마커
+//            marker.map = naverMap
+//            marker.icon = MarkerIcons.BLACK
+//            marker.iconTintColor = Color.BLUE
+//
+        }
+        naverMap.locationSource = locationSource
+        ActivityCompat.requestPermissions(this, PERMISSION, LOCATION_PERMISSION)
+    }
+
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when {
+            requestCode != LOCATION_PERMISSION -> {
+                return
+            }
+            else -> {
+                when {
+                    locationSource.onRequestPermissionsResult(requestCode,permissions,grantResults) -> {
+                        if (!locationSource.isActivated){
+                            naverMap.locationTrackingMode = LocationTrackingMode.None
+                        }else{
+                            naverMap.locationTrackingMode = LocationTrackingMode.Follow
+                        }
                     }
                 }
             }
         }
-
-        val locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 20 * 1000
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
-
-    override fun onMapReady(map: NaverMap) {
-        Log.e(TAG, "OnmapReady")
-        map.extent = LatLngBounds(LatLng(31.43, 122.37), LatLng(44.35, 132.0))
-        map.minZoom = 5.0
-        map.maxZoom = 18.0
-        naverMap = map
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
-    }
-
 
 }

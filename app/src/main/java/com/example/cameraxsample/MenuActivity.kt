@@ -48,6 +48,30 @@ class MenuActivity : AppCompatActivity() {
             }
         }
 
+        viewBinding.barcodeBtn.setOnClickListener{
+            val status =
+                ContextCompat.checkSelfPermission(baseContext, android.Manifest.permission.CAMERA)
+            if (status == PackageManager.PERMISSION_GRANTED) {
+                var intent = Intent(this, BarcodeQRcodeActivity::class.java);
+                startActivity(intent)
+            } else {
+                TedPermission.with(this)
+                    .setPermissionListener(object : PermissionListener{
+                        override fun onPermissionGranted() {
+                            startActivity(Intent(baseContext, BarcodeQRcodeActivity::class.java))
+                        }
+
+                        override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
+                            Log.e("Log","#####################onPermissionDenied#########################");
+                        }
+
+                    })
+                    .setDeniedMessage("지도 기능을 위해 권한을 허락해주세요.")
+                    .setPermissions(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    .check()
+            }
+        }
+
         viewBinding.gpsBtn.setOnClickListener { view ->
 
             val status =

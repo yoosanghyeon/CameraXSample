@@ -70,4 +70,6 @@ dependencies {
     // Permission
     implementation("io.github.ParkSangGwon:tedpermission:2.3.0")
 
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
 }
