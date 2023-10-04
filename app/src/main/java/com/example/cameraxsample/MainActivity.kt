@@ -40,6 +40,7 @@ import com.example.cameraxsample.databinding.ActivityMainBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
+import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
 import java.io.File
@@ -110,7 +111,8 @@ class MainActivity : AppCompatActivity(){
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        recognizer = TextRecognition.getClient()
+//        recognizer = TextRecognition.getClient()
+        recognizer = TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
 
         if (allPermissionGranted()) {
             startCamera()
