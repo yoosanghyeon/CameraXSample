@@ -27,6 +27,7 @@ class GScanActivity : AppCompatActivity() {
             .enableAutoZoom()
             .build()
         val scanner = GmsBarcodeScanning.getClient(this)
+//        val scanner = GmsBarcodeScanning.getClient(this, options)
 
         viewBinding.scanBtn.setOnClickListener{
             scanner.startScan()

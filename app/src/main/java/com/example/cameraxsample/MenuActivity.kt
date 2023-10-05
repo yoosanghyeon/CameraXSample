@@ -24,7 +24,6 @@ class MenuActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
 
 
-
         viewBinding.pictureBtn.setOnClickListener {
             val status =
                 ContextCompat.checkSelfPermission(baseContext, android.Manifest.permission.CAMERA)

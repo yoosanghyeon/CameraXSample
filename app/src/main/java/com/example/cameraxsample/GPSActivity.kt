@@ -70,8 +70,8 @@ class GPSActivity : AppCompatActivity(), OnMapReadyCallback {
         val cameraPosition = CameraPosition(
             LatLng(37.5666102, 126.9783881), // 대상 지점
             16.0, // 줌 레벨
-            20.0, // 기울임 각도
-            180.0 // 베어링 각도
+            0.0, // 기울임 각도
+            0.0 // 베어링 각도
         )
         naverMap.cameraPosition = cameraPosition
 
